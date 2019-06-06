@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Anystream</title>
+        <style type="text/css">
+            body {
+                margin: 10px 10px 10px 10px;
+                border-width: 1px;
+                border-color: black;
+            }
+            #header {
+                background-color: lightgreen;
+                padding: 10px 10px 10px 10px;
+                border-style: solid;
+                overflow: hidden;
+            }
+            #header-title {
+                font-size: 1em;
+                float: left;
+            }
+            #header-title a:visited {
+                color: darkblue;
+            }
+            #header-title a:link {
+                color: blue;
+                text-decoration: none;
+            }
+            #header-button {
+                float: right;
+            }
+            #content {
+                background-color: black;
+                border-left-style: solid;
+                border-right-style: solid;
+            }
+            .content-item {
+                font-family: monospace;
+		color: white;
+                padding-top: 2px;
+                padding-left: 10px;
+                padding-right: 10px;
+                padding-bottom: 0px;
+            }
+        </style>
+        <script type="text/javascript">
+            ws = null;
+
+            function toggleWSConnection(target) {
+                if (ws == null) {
+                    var content = document.getElementById("content");
+                    ws = new WebSocket("ws://localhost:8000/feed");
+
+                    ws.onmessage = function(msg) {
+                        var item = document.createElement("div");
+                        item.className = "content-item";
+                        item.innerHTML = msg.data;
+                        content.insertBefore(item, content.firstChild);
+
+                        if (content.childNodes.length > 10) {
+                            content.removeChild(content.lastChild);
+                        }
+                    };
+
+                    ws.onopen = function() {
+                        target.value = "Disconnect";
+                    };
+                } else {
+                    ws.close();
+                    ws = null;
+                    target.value = "Connect";
+                }
+            }
+        </script>
+    </head>
+    <body>
+        <div id="header">
+            <div id="header-title">
+                <a href="https://github.com/KajoServices/anywhere-doc">
+                    Social Sensing live-stream
+                </a>
+ 	        <br/><b>KAJO Services for ANYWHERE project</b>
+	    </div>  
+            <input type="button" id="header-button" value="Connect" onclick="toggleWSConnection(this);" />
+        </div>
+        <div id="content">
+            <!--
+            <div class="content-item">
+                Test case.
+                <hr />
+            </div>
+            -->
+        </div>
+    </body>
+</html>
